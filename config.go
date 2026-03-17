@@ -6,7 +6,18 @@ import (
 	"github.com/BurntSushi/toml"
 )
 
-type Config struct{}
+type Config struct {
+	Hosts []Host `toml:"hosts"`
+}
+
+type Host struct {
+	Name    string `toml:"name"`
+	Address string `toml:"address"`
+	User    string `toml:"user"`
+	Key     string `toml:"key,omitempty"`
+	Pass    string `toml:"pass,omitempty"`
+	Bastion string `toml:"bastion,omitempty"`
+}
 
 func loadConfig(path string) (Config, error) {
 	var cfg Config
