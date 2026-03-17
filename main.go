@@ -8,10 +8,16 @@ import (
 func main() {
 	fmt.Printf("Hello, world!\n")
 
-	config, err := loadConfig("config.toml")
+	//config, err := loadConfig("config.toml")
+	//if err != nil {
+	//	log.Fatalf("failed to read config: %s", err.Error())
+	//}
+
+	// fmt.Printf("config: %v\n", config)
+
+	err := runTmux("new-session")
 	if err != nil {
-		log.Fatalf("failed to read config: %s", err.Error())
+		log.Fatalf("%s", err.Error())
 	}
 
-	fmt.Printf("config: %v\n", config)
 }
