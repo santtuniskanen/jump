@@ -10,13 +10,16 @@ type Config struct {
 	Hosts []Host `toml:"hosts"`
 }
 
+type Bastion struct {
+	Name string `toml:"name"`
+	Host []Host
+}
+
 type Host struct {
 	Name    string `toml:"name"`
 	Address string `toml:"address"`
 	User    string `toml:"user"`
 	Key     string `toml:"key,omitempty"`
-	Pass    string `toml:"pass,omitempty"`
-	Bastion string `toml:"bastion,omitempty"`
 }
 
 func loadConfig(path string) (Config, error) {

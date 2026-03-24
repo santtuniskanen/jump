@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"strings"
 
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
@@ -85,15 +86,17 @@ func (m model) View() string {
 		return ""
 	}
 
-	s := titleStyle.Render("select a host") + "\n"
+	var s strings.Builder
+
+	s.WriteString(titleStyle.Render("select a host") + "\n")
 
 	for i, e := range m.entries {
 		line := fmt.Sprintf("%s (%s)", e.name, e.host)
 		if i == m.cursor {
-			s += selectedStyle.Render("> "+line) + "\n"
+			s.WriteString(selectedStyle.Render("> "+line) + "\n")
 		} else {
-			s += itemStyle.Render("  "+line) + "\n"
+			s.WriteString(itemStyle.Render("  "+line) + "\n")
 		}
 	}
-	return s + "\n"
+	return s.String()
 }

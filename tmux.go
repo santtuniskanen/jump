@@ -39,29 +39,44 @@ func Attach(session string) error {
 	)
 }
 
-// queue commands into TmuxSession so we can
-// launch them at the same time when Launch()
-// is called.
+// TmuxSession queues up tmux commands and executes them
+// all at once when Launch is called.
 type TmuxSession struct {
 	name       string
 	commands   [][]string
 	hasWindows bool
 }
 
+// NewTmuxSession creates a new session builder. The session
+// creation is deferred until the first AddWindow call so that
+// the first window's command can be baked into new-session,
+// avoiding an extra empty shell window.
 func NewTmuxSession(name string) *TmuxSession {
 	return &TmuxSession{
 		name: name,
 	}
 }
 
-// AddWindow queues a new tmux window.
+// AddWindow queues a new tmux window. The first call creates
+// the session itself with this window's command, so there is
+// no leftover empty shell window. Subsequent calls use
+// new-window.
 func (s *TmuxSession) AddWindow(name string, command string) {
-	args := []string{"new-window", "-t", s.name, "-n", name}
-	if command != "" {
-		args = append(args, command)
+	if !s.hasWindows {
+		// First window: create the session with this command
+		args := []string{"new-session", "-s", s.name, "-n", name, "-d"}
+		if command != "" {
+			args = append(args, command)
+		}
+		s.commands = append(s.commands, args)
+		s.hasWindows = true
+	} else {
+		args := []string{"new-window", "-t", s.name, "-n", name}
+		if command != "" {
+			args = append(args, command)
+		}
+		s.commands = append(s.commands, args)
 	}
-	s.commands = append(s.commands, args)
-
 }
 
 func (s *TmuxSession) Launch() error {
